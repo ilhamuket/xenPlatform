@@ -35,7 +35,8 @@ export class WebhookController {
     } catch (error) {
       this.logger.error('❌ Webhook processing error:', error);
       // Still return 200 to prevent Xendit from retrying
-      return res.status(200).json({ received: true, error: error.message });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return res.status(200).json({ received: true, error: errorMessage });
     }
   }
 

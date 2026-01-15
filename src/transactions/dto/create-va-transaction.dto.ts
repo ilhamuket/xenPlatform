@@ -4,13 +4,14 @@ import { IsEmail, IsNotEmpty, IsString, IsIn } from 'class-validator';
 export class CreateVaTransactionDto {
   @IsString()
   @IsNotEmpty()
-  customerName: string;
+  customerName!: string;
 
   @IsEmail()
   @IsNotEmpty()
-  customerEmail: string;
+  customerEmail!: string;
 
   @IsString()
+  @IsNotEmpty()
   @IsIn(['BCA', 'BNI', 'BRI', 'MANDIRI', 'PERMATA'])
-  bankCode: string;
+  bankCode!: string;
 }

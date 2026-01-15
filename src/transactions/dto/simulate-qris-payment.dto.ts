@@ -4,5 +4,5 @@ import { IsNumber, IsPositive } from 'class-validator';
 export class SimulateQRISPaymentDto {
   @IsNumber()
   @IsPositive()
-  amount: number;
+  amount!: number;
 }
