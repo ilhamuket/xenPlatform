@@ -1,17 +1,53 @@
 // src/main.ts
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
-  // Enable CORS untuk allow frontend hit API
+
+  // ✅ CORS Configuration - Allow Vercel domains
   app.enableCors({
-    origin: 'http://localhost:8080', // Frontend URL
+    origin: [
+      // Development
+      'http://localhost:8080',
+      'http://localhost:3000',
+      'http://127.0.0.1:8080',
+      
+      // Production
+      'https://xendit-frontend.vercel.app',
+      
+      // All Vercel preview deployments
+      /^https:\/\/xendit-frontend-.*\.vercel\.app$/,
+      /^https:\/\/.*\.vercel\.app$/,
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Accept',
+      'X-Requested-With',
+    ],
   });
-  
-  await app.listen(3000);
-  console.log('🚀 Backend running at http://localhost:3000');
+
+  // Global validation pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+
+  console.log('🚀 Server running on port', port);
+  console.log('✅ CORS enabled for:');
+  console.log('   - http://localhost:8080');
+  console.log('   - https://xendit-frontend.vercel.app');
+  console.log('   - All *.vercel.app domains');
 }
+
 bootstrap();
